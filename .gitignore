@@ -9,3 +9,4 @@ wheels/
 # Virtual environments
 .venv
 mmod_human_face_detector.dat
+output/
