@@ -2,13 +2,15 @@ from facenet_pytorch import MTCNN
 from PIL import Image
 import os
 
+from deepfake_recognition.models import DetectedFeatures
+
 
 def detect_and_save_cropped_faces(
     image_path,
     output_dir='./output/',
     with_output=False,
     with_landmarks=False,
-):
+) -> DetectedFeatures:
     """
     Detects faces in an image, crops each face, and saves them to a directory.
 
@@ -17,6 +19,12 @@ def detect_and_save_cropped_faces(
         output_dir (str): The directory to save the cropped faces.
         with_output (bool): If True, saves the cropped faces; if False, only returns bounding boxes.
         with_landmarks (bool): If True, returns facial landmarks along with bounding boxes.
+
+    Returns:
+        DetectedFeatures: A tuple containing:
+            - List of bounding box coordinates for each detected face.
+            - List of facial landmarks for each detected face (if with_landmarks is True).
+              Otherwise, returns None for landmarks.
     """
     # Initialize MTCNN for face detection
     mtcnn = MTCNN(keep_all=True)
@@ -30,9 +38,12 @@ def detect_and_save_cropped_faces(
     boxes = detected_image_features[0]
     if boxes is None:
         print("No faces detected in the image.")
-        return [None, None]
+        return DetectedFeatures(boxes=None, landmarks=None)
 
-    landmarks = detected_image_features[2] if with_landmarks else None
+    landmarks = None
+
+    if with_landmarks and len(detected_image_features) > 1 and detected_image_features[2] is not None:
+        landmarks = detected_image_features[2]
 
     if with_output:
         print(f"Detected {len(boxes)} faces.")
@@ -54,18 +65,18 @@ def detect_and_save_cropped_faces(
             cropped_face.save(output_file)
             print(f"Cropped face {i} saved to {output_file}")
 
-    return [boxes, landmarks]
+    return DetectedFeatures(boxes=boxes, landmarks=landmarks)
 
 
 def main():
     input_file = './input/girl-in-sunlight.jpg'
-    [detected_faces, landmarks] = detect_and_save_cropped_faces(
+    output = detect_and_save_cropped_faces(
         input_file,
         with_output=True,
-        with_landmarks=False
+        with_landmarks=True
     )
-    print("Detected face bounding boxes:", detected_faces)
-    print("Detected landmarks:", landmarks)
+    print("Detected boxes:", output.boxes)
+    print("Detected landmarks:", output.landmarks)
 
 
 if __name__ == "__main__":
