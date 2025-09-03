@@ -23,8 +23,8 @@ dev-dependencies = [
 
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "I"]  # Errors, flake8, isort
-ignore = ["E501"]         # Example: ignore long line warning
+lint.select = ["E", "F", "I"]  # Errors, flake8, isort
+lint.ignore = ["E501"]         # Example: ignore long line warning
 
 [tool.black]
 line-length = 88
