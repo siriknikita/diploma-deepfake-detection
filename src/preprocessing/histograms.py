@@ -2,8 +2,10 @@ import cv2
 import csv
 import os
 
+from src.schemas.types import ProjectSettings
 
-def compute_and_save_histograms(image, face_index, window_size, output_dir="histograms"):
+
+def compute_and_save_histograms(image, face_index, cfg: ProjectSettings, output_dir="histograms"):
     """
     Computes histograms for a sliding window over the image and saves the data to a CSV.
 
@@ -23,6 +25,8 @@ def compute_and_save_histograms(image, face_index, window_size, output_dir="hist
     header = ['window_x', 'window_y'] + [
         f'bin_{i}_{channel}' for channel in ['r', 'g', 'b'] for i in range(256)
     ]
+
+    window_size = cfg.window_size
 
     with open(csv_filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
