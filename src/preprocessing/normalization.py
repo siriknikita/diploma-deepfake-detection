@@ -1,11 +1,19 @@
+from cv2.typing import MatLike
+from numpy.typing import NDArray
 import cv2
 import numpy as np
+import PIL.Image
 
-from src.schemas.types import ProjectSettings
+from schemas.custom_types import ProjectSettings
 from src.utils.math import round_up_to_multiple
 
 
-def align_and_square_face(image, face_box, landmarks, cfg: ProjectSettings):
+def align_and_square_face(
+    image: PIL.Image.Image,
+    face_box: NDArray[np.int_],
+    landmarks: NDArray[np.int_],
+    cfg: ProjectSettings
+) -> MatLike:
     """
     Aligns a face from the original image based on eye landmarks, squares the crop,
     pads it to be a multiple of the window size, and then resizes the final crop.
@@ -38,7 +46,10 @@ def align_and_square_face(image, face_box, landmarks, cfg: ProjectSettings):
     size = int(size * (1 + padding))
 
     # Step 2: make sure size is a multiple of WINDOW_SIZE
-    size = round_up_to_multiple(size, window_size)
+    size = round_up_to_multiple(
+        number=size,
+        base=window_size
+    )
 
     # Step 3: landmarks for alignment
     # Convert landmarks to original image coordinates

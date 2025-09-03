@@ -1,12 +1,13 @@
-from typing import Any
+from typing import Any, cast
 import numpy as np
+from numpy._typing import NDArray
 from pydantic import BaseModel, GetCoreSchemaHandler, PositiveFloat, PositiveInt
 from pydantic_core import core_schema
 
 
 # The core concept: create a class that Pydantic can understand.
 # This class, NumpyArray, will inherit from np.ndarray.
-class NumpyArray(np.ndarray):
+class NumpyArray(NDArray[np.float64]):
     """
     A custom Pydantic-compatible class for NumPy arrays.
 
@@ -25,8 +26,8 @@ class NumpyArray(np.ndarray):
         Generates the Pydantic core schema for the `NumpyArray` type.
 
         Args:
-            source_type: The type that the schema is being generated for.
-            handler: A handler for generating schemas for other types.
+            source_type (Any): The type that the schema is being generated for.
+            handler (GetCoreSchemaHandler): A handler for generating schemas for other types.
 
         Returns:
             A `core_schema.CoreSchema` object that Pydantic can use.
@@ -34,16 +35,38 @@ class NumpyArray(np.ndarray):
 
         # 1. Define the validation logic.
         # This function converts an input (like a list of lists) into a NumPy array.
-        def validate_from_list(value: list) -> np.ndarray:
-            """Converts a list of lists to a NumPy array."""
+        def validate_from_list(value: list[Any]) -> NDArray[np.float64]:
+            """
+            Converts a list of lists to a NumPy array.
+
+            Args:
+                value (list[Any]): A list of lists representing the array data.
+
+            Returns:
+                A NumPy array constructed from the input list.
+            """
             return np.array(value)
 
         # 2. Define the serialization logic.
         # This function converts a NumPy array back into a standard Python list.
-        def serialize_to_list(value: np.ndarray) -> list:
-            """Converts a NumPy array to a list for serialization."""
-            # `tolist()` is a built-in NumPy method for this conversion.
-            return value.tolist()
+        def serialize_to_list(
+            value: NDArray[np.float64],
+        ) -> float | list[float] | list[list[float]] | list[list[list[float]]]:
+            """
+            Converts a NumPy array to a list for serialization.
+
+            Args:
+                value (NDArray[np.float64]): A NumPy array to be serialized.
+
+            Returns:
+                A list representation of the NumPy array.
+            """
+            # Explicitly cast the return value to resolve the type checker error
+            return cast(
+                float | list[float] | list[list[float]
+                                           ] | list[list[list[float]]],
+                value.tolist()
+            )
 
         # 3. Build the Pydantic Core Schema.
         # We use `core_schema.no_info_after_validator_function` to specify that
@@ -61,5 +84,12 @@ class NumpyArray(np.ndarray):
 
 
 class ProjectSettings(BaseModel):
+    """
+    Project settings model. Defines configuration parameters for the project.
+
+    Attributes:
+        `window_size` (PositiveInt): The size of the window, must be a positive integer.
+        `padding` (PositiveInt | PositiveFloat): The padding value, can be a positive integer or float.
+    """
     window_size: PositiveInt
     padding: PositiveInt | PositiveFloat

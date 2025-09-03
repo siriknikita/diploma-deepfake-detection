@@ -2,9 +2,15 @@ from enum import Enum
 import os
 
 
-def find_project_root(start_path):
+def find_project_root(start_path: str) -> str:
     """
     Finds the project root directory by searching for a specific marker file.
+
+    Args:
+        start_path (str): The directory to start searching from.
+
+    Returns:
+        str: The path to the project root directory.
     """
     current_path = os.path.abspath(start_path)
     while True:

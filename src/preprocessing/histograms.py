@@ -1,16 +1,22 @@
+from cv2.typing import MatLike
 import cv2
 import csv
 import os
 
-from src.schemas.types import ProjectSettings
+from schemas.custom_types import ProjectSettings
 
 
-def compute_and_save_histograms(image, face_index, cfg: ProjectSettings, output_dir="histograms"):
+def compute_and_save_histograms(
+    image: MatLike,
+    face_index: int,
+    cfg: ProjectSettings,
+    output_dir: str = "histograms"
+) -> None:
     """
     Computes histograms for a sliding window over the image and saves the data to a CSV.
 
     Args:
-        image (numpy.ndarray): The input image (aligned face).
+        image (cv2.typing.MatLike): The input image (aligned face).
         face_index (int): Index of the face for naming the output file.
         window_size (int): Size of the sliding window.
         output_dir (str): Directory to save the output files.
