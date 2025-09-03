@@ -1,6 +1,6 @@
 import yaml
 
-from schemas.custom_types import ProjectSettings
+from src.schemas.custom_types import ProjectSettings
 from src.schemas.enums.config_paths import ConfigName
 
 

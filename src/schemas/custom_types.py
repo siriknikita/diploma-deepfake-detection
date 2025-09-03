@@ -63,9 +63,8 @@ class NumpyArray(NDArray[np.float64]):
             """
             # Explicitly cast the return value to resolve the type checker error
             return cast(
-                float | list[float] | list[list[float]
-                                           ] | list[list[list[float]]],
-                value.tolist()
+                float | list[float] | list[list[float]] | list[list[list[float]]],
+                value.tolist(),
             )
 
         # 3. Build the Pydantic Core Schema.
@@ -91,5 +90,6 @@ class ProjectSettings(BaseModel):
         `window_size` (PositiveInt): The size of the window, must be a positive integer.
         `padding` (PositiveInt | PositiveFloat): The padding value, can be a positive integer or float.
     """
+
     window_size: PositiveInt
     padding: PositiveInt | PositiveFloat

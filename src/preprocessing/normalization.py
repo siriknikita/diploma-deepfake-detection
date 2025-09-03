@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import PIL.Image
 
-from schemas.custom_types import ProjectSettings
+from src.schemas.custom_types import ProjectSettings
 from src.utils.math import round_up_to_multiple
 
 
@@ -12,7 +12,7 @@ def align_and_square_face(
     image: PIL.Image.Image,
     face_box: NDArray[np.int_],
     landmarks: NDArray[np.int_],
-    cfg: ProjectSettings
+    cfg: ProjectSettings,
 ) -> MatLike:
     """
     Aligns a face from the original image based on eye landmarks, squares the crop,
@@ -46,10 +46,7 @@ def align_and_square_face(
     size = int(size * (1 + padding))
 
     # Step 2: make sure size is a multiple of WINDOW_SIZE
-    size = round_up_to_multiple(
-        number=size,
-        base=window_size
-    )
+    size = round_up_to_multiple(number=size, base=window_size)
 
     # Step 3: landmarks for alignment
     # Convert landmarks to original image coordinates
@@ -79,9 +76,12 @@ def align_and_square_face(
     # Step 7: apply padding to the rotated image
     padded = cv2.copyMakeBorder(
         rotated,
-        int(pad_top), int(pad_bottom), int(pad_left), int(pad_right),
+        int(pad_top),
+        int(pad_bottom),
+        int(pad_left),
+        int(pad_right),
         borderType=cv2.BORDER_CONSTANT,
-        value=(0, 0, 0)
+        value=(0, 0, 0),
     )
 
     # Step 8: crop the image
@@ -94,10 +94,16 @@ def align_and_square_face(
 
     # Step 9: Guarantee the final dimensions are a multiple of window size with a resize
     final_resized_crop = cv2.resize(
-        final_crop, (size, size), interpolation=cv2.INTER_AREA)
+        final_crop, (size, size), interpolation=cv2.INTER_AREA
+    )
 
     # Final check
-    if final_resized_crop.shape[0] % window_size != 0 or final_resized_crop.shape[1] % window_size != 0:
-        print(f"Warning: Final crop size {final_resized_crop.shape} is not a multiple of {window_size}")
+    if (
+        final_resized_crop.shape[0] % window_size != 0
+        or final_resized_crop.shape[1] % window_size != 0
+    ):
+        print(
+            f"Warning: Final crop size {final_resized_crop.shape} is not a multiple of {window_size}"
+        )
 
     return final_resized_crop

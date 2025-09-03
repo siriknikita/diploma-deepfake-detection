@@ -45,11 +45,11 @@ def detect_and_save_cropped_faces(
 
 def detect_and_save_cropped_faces(
     image_path: str,
-    output_dir: str = './output/',
+    output_dir: str = "./output/",
     with_output: bool = False,
     with_landmarks: bool = False,
     as_dict: bool = True,
-    as_json: bool = False
+    as_json: bool = False,
 ) -> dict[str, Any] | str | DetectedFeatures:
     """
     Detects faces in an image, crops each face, and saves them to a directory.
@@ -99,11 +99,13 @@ def detect_and_save_cropped_faces(
         return result
 
     landmarks = None
-    can_extract_landmarks = all([
-        with_landmarks,
-        len(detected_image_features) > 1,
-        detected_image_features[2] is not None
-    ])
+    can_extract_landmarks = all(
+        [
+            with_landmarks,
+            len(detected_image_features) > 1,
+            detected_image_features[2] is not None,
+        ]
+    )
 
     if can_extract_landmarks:
         landmarks = detected_image_features[2]

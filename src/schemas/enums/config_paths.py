@@ -14,13 +14,14 @@ def find_project_root(start_path: str) -> str:
     """
     current_path = os.path.abspath(start_path)
     while True:
-        if os.path.exists(os.path.join(current_path, 'configs')):
+        if os.path.exists(os.path.join(current_path, "configs")):
             return current_path
         parent_path = os.path.dirname(current_path)
         if parent_path == current_path:
             # Reached the root of the file system
             raise FileNotFoundError(
-                "Could not find project root containing 'configs' directory.")
+                "Could not find project root containing 'configs' directory."
+            )
         current_path = parent_path
 
 
@@ -36,8 +37,7 @@ class ConfigName(str, Enum):
         """Return full path to config file"""
         try:
             project_root = find_project_root(__file__)
-            complete_config_path = os.path.join(
-                project_root, CONFIG_DIR, self.value)
+            complete_config_path = os.path.join(project_root, CONFIG_DIR, self.value)
             return complete_config_path
         except FileNotFoundError as e:
             raise RuntimeError(
