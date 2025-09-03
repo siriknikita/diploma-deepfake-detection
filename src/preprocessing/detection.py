@@ -1,9 +1,9 @@
+import os
+from typing import Any, Literal, overload
+
 from facenet_pytorch import MTCNN
 from PIL import Image
 
-import os
-
-from typing import Any, Literal, overload
 from src.schemas.features import DetectedFeatures
 
 

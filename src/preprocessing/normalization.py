@@ -1,8 +1,8 @@
-from cv2.typing import MatLike
-from numpy.typing import NDArray
 import cv2
 import numpy as np
 import PIL.Image
+from cv2.typing import MatLike
+from numpy.typing import NDArray
 
 from src.schemas.custom_types import ProjectSettings
 from src.utils.math import round_up_to_multiple

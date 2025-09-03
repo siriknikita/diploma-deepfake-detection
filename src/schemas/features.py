@@ -1,4 +1,5 @@
 from typing import Any
+
 from pydantic import BaseModel
 
 from src.schemas.custom_types import NumpyArray

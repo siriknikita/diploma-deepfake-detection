@@ -1,7 +1,8 @@
-from cv2.typing import MatLike
-import cv2
 import csv
 import os
+
+import cv2
+from cv2.typing import MatLike
 
 from src.schemas.custom_types import ProjectSettings
 

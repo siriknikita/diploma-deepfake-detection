@@ -1,5 +1,5 @@
-from enum import Enum
 import os
+from enum import Enum
 
 
 def find_project_root(start_path: str) -> str:

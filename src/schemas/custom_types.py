@@ -1,4 +1,5 @@
 from typing import Any, cast
+
 import numpy as np
 from numpy._typing import NDArray
 from pydantic import BaseModel, GetCoreSchemaHandler, PositiveFloat, PositiveInt
