@@ -1,6 +1,6 @@
 from typing import Any
 import numpy as np
-from pydantic import GetCoreSchemaHandler
+from pydantic import BaseModel, GetCoreSchemaHandler, PositiveFloat, PositiveInt
 from pydantic_core import core_schema
 
 
@@ -58,3 +58,8 @@ class NumpyArray(np.ndarray):
                 serialize_to_list
             ),
         )
+
+
+class ProjectSettings(BaseModel):
+    window_size: PositiveInt
+    padding: PositiveInt | PositiveFloat

@@ -1,10 +1,11 @@
 import cv2
 import numpy as np
 
+from src.schemas.types import ProjectSettings
 from src.utils.math import round_up_to_multiple
 
 
-def align_and_square_face(image, face_box, landmarks, window_size, padding):
+def align_and_square_face(image, face_box, landmarks, cfg: ProjectSettings):
     """
     Aligns a face from the original image based on eye landmarks, squares the crop,
     pads it to be a multiple of the window size, and then resizes the final crop.
@@ -28,6 +29,9 @@ def align_and_square_face(image, face_box, landmarks, window_size, padding):
     # Center of face in the original image coordinates
     cx = (x1_box + x2_box) // 2
     cy = (y1_box + y2_box) // 2
+
+    window_size = cfg.window_size
+    padding = cfg.padding
 
     # Step 1: calculate required square size with padding
     size = max(w_box, h_box)

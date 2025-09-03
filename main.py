@@ -1,20 +1,23 @@
 import os
 import cv2
+
 from PIL import Image
 
+from src.config import load_config
+
+from src.schemas.enums.config_paths import ConfigName
 from src.preprocessing.detection import detect_and_save_cropped_faces
 from src.preprocessing.histograms import compute_and_save_histograms
 from src.preprocessing.normalization import align_and_square_face
-
-# Parameters
-WINDOW_SIZE = 9
-PADDING = 0.25
 
 
 def main():
     """Main function to detect, align, and analyze faces from an image."""
     input_file = './data/test-dataset/girl-in-sunlight.jpg'
     output_dir = './results/histograms'
+
+    # Configuration object
+    cfg = load_config(ConfigName.DEFAULT)
 
     # Step 1: Use the provided function to detect faces and get landmarks
     # We set with_output=False because we handle our own saving of the final, aligned crops.
@@ -46,8 +49,7 @@ def main():
             image=original_img,
             face_box=box,
             landmarks=landmarks,
-            window_size=WINDOW_SIZE,
-            padding=PADDING
+            cfg=cfg
         )
 
         # Step 4: Save the aligned face image
@@ -60,7 +62,7 @@ def main():
         compute_and_save_histograms(
             image=aligned_face,
             face_index=face_index,
-            window_size=WINDOW_SIZE,
+            cfg=cfg,
             output_dir=output_dir
         )
 
