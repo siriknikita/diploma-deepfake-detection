@@ -23,14 +23,17 @@ def main():
     # We set with_output=False because we handle our own saving of the final, aligned crops.
     detected_features = detect_and_save_cropped_faces(
         image_path=input_file,
-        with_output=False,
         with_landmarks=True,
         as_dict=True,
         as_json=False
     )
 
     # Check if any faces were detected
-    if detected_features['boxes'] is None or len(detected_features['boxes']) == 0:
+    no_faces_detected = any([
+        detected_features['boxes'] is None,
+        len(detected_features['boxes']) == 0
+    ])
+    if no_faces_detected:
         print("No faces detected.")
         return
 
