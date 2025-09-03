@@ -29,6 +29,18 @@ ignore = ["E501"]         # Example: ignore long line warning
 [tool.black]
 line-length = 88
 target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.tox
+  | \.venv
+  | _build
+  | build
+  | dist
+)/
+'''
 
 [tool.mypy]
 python_version = "3.11"
