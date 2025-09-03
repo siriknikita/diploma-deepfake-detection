@@ -1,9 +1,9 @@
+import os
+from typing import Any, Literal, overload
+
 from facenet_pytorch import MTCNN
 from PIL import Image
 
-import os
-
-from typing import Any, Literal, overload
 from src.schemas.features import DetectedFeatures
 
 
@@ -44,12 +44,12 @@ def detect_and_save_cropped_faces(
 
 
 def detect_and_save_cropped_faces(
-    image_path,
-    output_dir='./output/',
-    with_output=False,
-    with_landmarks=False,
-    as_dict=True,
-    as_json=False
+    image_path: str,
+    output_dir: str = "./output/",
+    with_output: bool = False,
+    with_landmarks: bool = False,
+    as_dict: bool = True,
+    as_json: bool = False,
 ) -> dict[str, Any] | str | DetectedFeatures:
     """
     Detects faces in an image, crops each face, and saves them to a directory.
@@ -66,6 +66,7 @@ def detect_and_save_cropped_faces(
         if as_dict is True: dict with bounding boxes and landmarks (if requested).
         if as_json is True: JSON string with bounding boxes and landmarks (if requested).
         else: DetectedFeatures object containing bounding boxes and landmarks (if requested).
+
     Raises:
         ValueError: If both as_dict and as_json are set to True.
     """
@@ -98,11 +99,13 @@ def detect_and_save_cropped_faces(
         return result
 
     landmarks = None
-    can_extract_landmarks = all([
-        with_landmarks,
-        len(detected_image_features) > 1,
-        detected_image_features[2] is not None
-    ])
+    can_extract_landmarks = all(
+        [
+            with_landmarks,
+            len(detected_image_features) > 1,
+            detected_image_features[2] is not None,
+        ]
+    )
 
     if can_extract_landmarks:
         landmarks = detected_image_features[2]

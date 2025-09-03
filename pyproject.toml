@@ -10,4 +10,40 @@ dependencies = [
     "pydantic>=2.11.7",
     "pyyaml>=6.0.2",
     "torchvision>=0.23.0",
+    "types-pyyaml>=6.0.12.20250822",
 ]
+
+[tool.uv]
+dev-dependencies = [
+    "ruff",
+    "black",
+    "mypy",
+    "pre-commit",
+]
+
+[tool.ruff]
+line-length = 88
+lint.select = ["E", "F", "I"]  # Errors, flake8, isort
+lint.ignore = ["E501"]         # Example: ignore long line warning
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.tox
+  | \.venv
+  | _build
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.11"
+disallow_untyped_defs = true
+strict = true
+ignore_missing_imports = true
