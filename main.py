@@ -1,6 +1,3 @@
-import os
-import cv2
-
 from PIL import Image
 
 from src.config import load_config
@@ -13,16 +10,14 @@ from src.preprocessing.normalization import align_and_square_face
 
 def main():
     """Main function to detect, align, and analyze faces from an image."""
-    input_file = './data/test-dataset/girl-in-sunlight.jpg'
-    output_dir = './results/histograms'
-
     # Configuration object
     cfg = load_config(ConfigName.DEFAULT)
 
+    input_file_path = cfg.input_file_path
+
     # Step 1: Use the provided function to detect faces and get landmarks
-    # We set with_output=False because we handle our own saving of the final, aligned crops.
     detected_features = detect_face_features(
-        image_path=input_file,
+        image_path=input_file_path,
         with_landmarks=True,
         as_dict=True,
         as_json=False
@@ -38,16 +33,14 @@ def main():
         return
 
     # Load the original image once
-    original_img = Image.open(input_file).convert('RGB')
+    original_img = Image.open(input_file_path).convert('RGB')
 
     # Step 2: Iterate through each detected face
-    for i, (box, landmarks) in enumerate(zip(
+    for _, (box, landmarks) in enumerate(zip(
         detected_features['boxes'],
         detected_features['landmarks']
     )):
-        face_index = i + 1
-
-        # Step 3: Align and square the face using the new function
+        # Step 3: Align and square the face
         aligned_face = align_and_square_face(
             image=original_img,
             face_box=box,
@@ -55,13 +48,7 @@ def main():
             cfg=cfg
         )
 
-        # Step 4: Save the aligned face image
-        os.makedirs(output_dir, exist_ok=True)
-        image_filename = os.path.join(
-            output_dir, f"aligned_face_{face_index}.jpg")
-        cv2.imwrite(image_filename, aligned_face)
-
-        # Step 5: Compute histograms
+        # Step 4: Compute histograms
         compute_histograms_for_window(
             image=aligned_face,
             cfg=cfg,

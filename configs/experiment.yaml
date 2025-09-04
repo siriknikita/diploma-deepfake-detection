@@ -1,2 +1,3 @@
 window_size: 9
 padding: 0.25
+input_file_path: "./data/test-dataset/girl-in-sunlight.jpg"

@@ -90,10 +90,12 @@ class ProjectSettings(BaseModel):
     Attributes:
         `window_size` (PositiveInt): The size of the window, must be a positive integer.
         `padding` (PositiveInt | PositiveFloat): The padding value, can be a positive integer or float.
+        `input_file_path` (str): The path to the input file.
     """
 
     window_size: PositiveInt
     padding: PositiveInt | PositiveFloat
+    input_file_path: str
 
 
 class HistogramData(TypedDict):
