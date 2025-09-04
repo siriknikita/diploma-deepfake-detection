@@ -5,9 +5,9 @@ from PIL import Image
 
 from src.config import load_config
 
+from src.preprocessing.histograms import compute_histograms_for_window
 from src.schemas.enums.config_paths import ConfigName
 from src.preprocessing.detection import detect_face_features
-from src.preprocessing.histograms import compute_and_save_histograms
 from src.preprocessing.normalization import align_and_square_face
 
 
@@ -61,12 +61,10 @@ def main():
             output_dir, f"aligned_face_{face_index}.jpg")
         cv2.imwrite(image_filename, aligned_face)
 
-        # Step 5: Compute and save histograms
-        compute_and_save_histograms(
+        # Step 5: Compute histograms
+        compute_histograms_for_window(
             image=aligned_face,
-            face_index=face_index,
             cfg=cfg,
-            output_dir=output_dir
         )
 
 
