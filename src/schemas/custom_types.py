@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, TypedDict, cast
 
 import numpy as np
 from numpy._typing import NDArray
@@ -90,7 +90,28 @@ class ProjectSettings(BaseModel):
     Attributes:
         `window_size` (PositiveInt): The size of the window, must be a positive integer.
         `padding` (PositiveInt | PositiveFloat): The padding value, can be a positive integer or float.
+        `input_file_path` (str): The path to the input file.
     """
 
     window_size: PositiveInt
     padding: PositiveInt | PositiveFloat
+    input_file_path: str
+
+
+class HistogramData(TypedDict):
+    """
+    Histogram data structure for storing histogram information of image windows.
+
+    Attributes:
+        `window_x` (PositiveInt): The x-coordinate of the window.
+        `window_y` (PositiveInt): The y-coordinate of the window.
+        `hist_r` (list[PositiveFloat]): The histogram data for the red channel.
+        `hist_g` (list[PositiveFloat]): The histogram data for the green channel.
+        `hist_b` (list[PositiveFloat]): The histogram data for the blue channel.
+    """
+
+    window_x: PositiveInt
+    window_y: PositiveInt
+    hist_r: list[PositiveFloat]
+    hist_g: list[PositiveFloat]
+    hist_b: list[PositiveFloat]

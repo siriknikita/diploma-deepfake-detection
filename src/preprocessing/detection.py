@@ -1,4 +1,3 @@
-import os
 from typing import Any, Literal, overload
 
 from facenet_pytorch import MTCNN
@@ -8,10 +7,8 @@ from src.schemas.features import DetectedFeatures
 
 
 @overload
-def detect_and_save_cropped_faces(
+def detect_face_features(
     image_path: str,
-    output_dir: str = "./output/",
-    with_output: bool = False,
     with_landmarks: bool = False,
     *,
     as_dict: Literal[False],
@@ -20,10 +17,8 @@ def detect_and_save_cropped_faces(
 
 
 @overload
-def detect_and_save_cropped_faces(
+def detect_face_features(
     image_path: str,
-    output_dir: str = "./output/",
-    with_output: bool = False,
     with_landmarks: bool = False,
     *,
     as_dict: Literal[True],
@@ -32,10 +27,8 @@ def detect_and_save_cropped_faces(
 
 
 @overload
-def detect_and_save_cropped_faces(
+def detect_face_features(
     image_path: str,
-    output_dir: str = "./output/",
-    with_output: bool = False,
     with_landmarks: bool = False,
     *,
     as_dict: Literal[False] = False,
@@ -43,21 +36,17 @@ def detect_and_save_cropped_faces(
 ) -> DetectedFeatures: ...
 
 
-def detect_and_save_cropped_faces(
+def detect_face_features(
     image_path: str,
-    output_dir: str = "./output/",
-    with_output: bool = False,
     with_landmarks: bool = False,
     as_dict: bool = True,
     as_json: bool = False,
 ) -> dict[str, Any] | str | DetectedFeatures:
     """
-    Detects faces in an image, crops each face, and saves them to a directory.
+    Detects faces in an image, optionally extracting facial landmarks.
 
     Args:
         image_path (str): The path to the input image file.
-        output_dir (str): The directory to save the cropped faces.
-        with_output (bool): If True, saves the cropped faces; if False, only returns bounding boxes.
         with_landmarks (bool): If True, returns facial landmarks along with bounding boxes.
         as_dict (bool): If True, returns results as a dictionary.
         as_json (bool): If True, returns results in JSON format.
@@ -73,56 +62,35 @@ def detect_and_save_cropped_faces(
     if as_dict and as_json:
         raise ValueError("Cannot set both as_dict and as_json to True.")
 
-    if with_output and not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
     # Initialize MTCNN for face detection
     mtcnn = MTCNN(keep_all=True)
 
     # Load the image
     img = Image.open(image_path)
+    boxes, landmarks = None, None
 
     # Detect faces and get bounding box coordinates
     detected_image_features = mtcnn.detect(img, landmarks=with_landmarks)
 
-    boxes = detected_image_features[0]
-    if boxes is None:
-        print("No faces detected in the image.")
+    can_extract_boxes = all(
+        [
+            len(detected_image_features) >= 1,
+            detected_image_features[0] is not None,
+        ]
+    )
 
-        result = DetectedFeatures(boxes=None, landmarks=None)
+    if can_extract_boxes:
+        boxes = detected_image_features[0]
 
-        if as_dict:
-            return result.model_dump()
-        if as_json:
-            return result.model_dump_json()
-
-        return result
-
-    landmarks = None
     can_extract_landmarks = all(
         [
-            with_landmarks,
             len(detected_image_features) > 1,
             detected_image_features[2] is not None,
         ]
     )
 
-    if can_extract_landmarks:
+    if with_landmarks and can_extract_landmarks:
         landmarks = detected_image_features[2]
-
-    if with_output:
-        for i, box in enumerate(boxes):
-            # The bounding box format is [x_min, y_min, x_max, y_max]
-            # Use the box coordinates to crop the original image
-            cropped_face = img.crop(box.tolist())
-
-            # Create a unique filename for each cropped face
-            base_name = os.path.basename(image_path)
-            name, ext = os.path.splitext(base_name)
-            output_file = os.path.join(output_dir, f"{name}_face_{i}{ext}")
-
-            # Save the cropped face image
-            cropped_face.save(output_file)
 
     result = DetectedFeatures(boxes=boxes, landmarks=landmarks)
     if as_dict:
