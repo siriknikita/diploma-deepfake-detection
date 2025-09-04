@@ -59,6 +59,5 @@ def main():
             print("No CNN features extracted")
 
 
-
 if __name__ == "__main__":
     main()
