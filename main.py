@@ -6,7 +6,7 @@ from PIL import Image
 from src.config import load_config
 
 from src.schemas.enums.config_paths import ConfigName
-from src.preprocessing.detection import detect_and_save_cropped_faces
+from src.preprocessing.detection import detect_face_features
 from src.preprocessing.histograms import compute_and_save_histograms
 from src.preprocessing.normalization import align_and_square_face
 
@@ -21,7 +21,7 @@ def main():
 
     # Step 1: Use the provided function to detect faces and get landmarks
     # We set with_output=False because we handle our own saving of the final, aligned crops.
-    detected_features = detect_and_save_cropped_faces(
+    detected_features = detect_face_features(
         image_path=input_file,
         with_landmarks=True,
         as_dict=True,
