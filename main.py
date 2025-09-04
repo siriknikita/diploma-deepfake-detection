@@ -5,7 +5,7 @@ from src.config import load_config
 from src.preprocessing.histograms import compute_histograms_for_window
 from src.schemas.enums.config_paths import ConfigName
 from src.preprocessing.detection import detect_face_features
-from src.preprocessing.normalization import align_and_square_face
+from src.preprocessing.normalization import normalize_face
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
         detected_features['landmarks']
     )):
         # Step 3: Align and square the face
-        aligned_face = align_and_square_face(
+        normalized_face = normalize_face(
             image=original_img,
             face_box=box,
             landmarks=landmarks,
@@ -50,7 +50,7 @@ def main():
 
         # Step 4: Compute histograms
         compute_histograms_for_window(
-            image=aligned_face,
+            image=normalized_face,
             cfg=cfg,
         )
 
