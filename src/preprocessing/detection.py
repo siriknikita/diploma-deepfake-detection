@@ -82,10 +82,6 @@ def detect_face_features(
     if can_extract_boxes:
         boxes = detected_image_features[0]
 
-    # If no faces are detected, disable landmarks extraction
-    if boxes is None:
-        with_landmarks = False
-
     can_extract_landmarks = all(
         [
             len(detected_image_features) > 1,
