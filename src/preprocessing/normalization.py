@@ -22,8 +22,7 @@ def align_and_square_face(
         image (PIL.Image.Image): The full, original input image.
         face_box (np.ndarray): The bounding box of the face [x1, y1, x2, y2].
         landmarks (np.ndarray): Array of facial landmarks relative to the box.
-        window_size (int): The size of the sliding window.
-        padding (float): The padding percentage.
+        cfg (ProjectSettings): Configuration settings including window size and padding.
 
     Returns:
         numpy.ndarray: The aligned, squared, and resized face image (BGR format).
