@@ -2,7 +2,7 @@ from PIL import Image
 
 from src.config import load_config
 
-from src.preprocessing.histograms import compute_histograms_for_window
+from src.preprocessing.histograms import get_cnn_histogram_features
 from src.schemas.enums.config_paths import ConfigName
 from src.preprocessing.detection import detect_face_features
 from src.preprocessing.normalization import normalize_face
@@ -14,7 +14,6 @@ def main():
     cfg = load_config(ConfigName.DEFAULT)
 
     input_file_path = cfg.input_file_path
-
     # Step 1: Use the provided function to detect faces and get landmarks
     detected_features = detect_face_features(
         image_path=input_file_path,
@@ -48,11 +47,17 @@ def main():
             cfg=cfg
         )
 
-        # Step 4: Compute histograms
-        compute_histograms_for_window(
+        # Step 4: Compute histograms and get structured CNN features
+        cnn_features = get_cnn_histogram_features(
             image=normalized_face,
             cfg=cfg,
         )
+
+        if cnn_features.feature_matrix.size > 0:
+            print("CNN features extracted successfully")
+        else:
+            print("No CNN features extracted")
+
 
 
 if __name__ == "__main__":

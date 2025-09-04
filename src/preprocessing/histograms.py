@@ -5,6 +5,7 @@ import numpy as np
 from cv2.typing import MatLike
 
 from src.schemas.custom_types import HistogramData, ProjectSettings
+from src.schemas.features import CNNHistogramFeatures
 
 
 def compute_histograms_for_window(
@@ -50,3 +51,81 @@ def compute_histograms_for_window(
             )
 
     return histograms
+
+
+def concatenate_histograms_to_matrix(
+    histograms: List[HistogramData]
+) -> np.ndarray:
+    """
+    Concatenates RGB histograms from multiple windows into a single matrix.
+    
+    For each window, concatenates the red, green, and blue channel histograms
+    into a single feature vector of size 768 (256×3). The result is a matrix
+    of shape (num_windows, 768) suitable for CNN input.
+    
+    Args:
+        histograms (List[HistogramData]): List of histogram data dictionaries
+            returned by compute_histograms_for_window.
+    
+    Returns:
+        np.ndarray: Matrix of shape (num_windows, 768) where each row represents
+            the concatenated RGB histograms for one window.
+    """
+    if not histograms:
+        return np.array([])
+    
+    num_windows = len(histograms)
+    feature_matrix = np.zeros((num_windows, 768), dtype=np.float64)
+    
+    for i, hist_data in enumerate(histograms):
+        # Concatenate RGB histograms: [R, G, B] -> single vector of length 768
+        hist_r = np.array(hist_data["hist_r"], dtype=np.float64)
+        hist_g = np.array(hist_data["hist_g"], dtype=np.float64)
+        hist_b = np.array(hist_data["hist_b"], dtype=np.float64)
+        
+        # Concatenate along the feature dimension
+        concatenated_features = np.concatenate([hist_r, hist_g, hist_b])
+        feature_matrix[i, :] = concatenated_features
+    
+    return feature_matrix
+
+
+def get_histogram_matrix_for_cnn(
+    image: MatLike, cfg: ProjectSettings
+) -> np.ndarray:
+    """
+    Computes histograms and returns them as a concatenated matrix for CNN input.
+    
+    This is a convenience function that combines compute_histograms_for_window
+    and concatenate_histograms_to_matrix into a single call.
+    
+    Args:
+        image (cv2.typing.MatLike): The input image (aligned face).
+        cfg (ProjectSettings): Configuration settings containing window size.
+    
+    Returns:
+        np.ndarray: Matrix of shape (num_windows, 768) ready for CNN input.
+    """
+    histograms = compute_histograms_for_window(image, cfg)
+    return concatenate_histograms_to_matrix(histograms)
+
+
+def get_cnn_histogram_features(
+    image: MatLike, cfg: ProjectSettings
+) -> CNNHistogramFeatures:
+    """
+    Computes histograms and returns them as a structured CNNHistogramFeatures object.
+    
+    This function provides the most complete interface, returning both the raw
+    matrix and metadata about the features.
+    
+    Args:
+        image (cv2.typing.MatLike): The input image (aligned face).
+        cfg (ProjectSettings): Configuration settings containing window size.
+    
+    Returns:
+        CNNHistogramFeatures: A structured object containing the feature matrix
+            and metadata suitable for CNN input.
+    """
+    histogram_matrix = get_histogram_matrix_for_cnn(image, cfg)
+    return CNNHistogramFeatures.from_histogram_matrix(histogram_matrix, cfg.window_size)
