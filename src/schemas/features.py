@@ -22,7 +22,7 @@ class DetectedFeatures(BaseModel):
     landmarks: Any | NumpyArray | None
 
 
-class CNNHistogramFeatures(BaseModel):
+class CNNHistogramFeatures(BaseModel, arbitrary_types_allowed=True):
     """
     A Pydantic model to represent concatenated histogram features for CNN input.
 
@@ -38,7 +38,7 @@ class CNNHistogramFeatures(BaseModel):
         window_size (int): Size of the sliding window used.
     """
 
-    feature_matrix: np.ndarray[Any, Any]
+    feature_matrix: np.ndarray
     num_windows: int
     feature_dimension: int
     window_size: int
