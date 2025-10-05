@@ -72,6 +72,7 @@ def detect_face_features(
     # Detect faces and get bounding box coordinates
     detected_image_features = mtcnn.detect(img, landmarks=with_landmarks)
 
+    # Check if we can extract boxes and landmarks
     can_extract_boxes = all(
         [
             len(detected_image_features) >= 1,
@@ -82,14 +83,11 @@ def detect_face_features(
     if can_extract_boxes:
         boxes = detected_image_features[0]
 
-    can_extract_landmarks = all(
-        [
-            len(detected_image_features) > 1,
-            detected_image_features[2] is not None,
-        ]
-    )
-
-    if with_landmarks and can_extract_landmarks:
+    # Save landmarks if requested
+    # if `landmarks` parameter is True, `detected_image_features` has length 3
+    # otherwise, it has length 2, and the 3rd element is not present
+    # so we check if we have a landmarks element before accessing it
+    if with_landmarks and len(detected_image_features) == 3:
         landmarks = detected_image_features[2]
 
     result = DetectedFeatures(boxes=boxes, landmarks=landmarks)
